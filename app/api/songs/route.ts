@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import seedData from '@/lib/seed-songs.json';
 
 /**
  * API Route to get songs
@@ -28,12 +27,28 @@ export async function GET() {
 
     // Fall back to seed data if no cached data exists
     console.log('Using seed data - no cached songs found');
-    return NextResponse.json({
-      success: true,
-      songs: seedData.songs,
-      lastUpdated: seedData.lastUpdated,
-      source: 'seed',
-    });
+    const seedDataPath = path.join(process.cwd(), 'lib', 'seed-songs.json');
+
+    if (fs.existsSync(seedDataPath)) {
+      const seedFileContent = fs.readFileSync(seedDataPath, 'utf-8');
+      const seedData = JSON.parse(seedFileContent);
+
+      return NextResponse.json({
+        success: true,
+        songs: seedData.songs,
+        lastUpdated: seedData.lastUpdated,
+        source: 'seed',
+      });
+    }
+
+    // If even seed data is missing, return error
+    return NextResponse.json(
+      {
+        success: false,
+        error: 'No songs data available. Please contact support.',
+      },
+      { status: 500 }
+    );
   } catch (error) {
     console.error('Error loading songs:', error);
 
