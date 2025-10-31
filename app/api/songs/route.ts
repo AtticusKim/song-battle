@@ -1,54 +1,22 @@
 import { NextResponse } from 'next/server';
-import fs from 'fs';
-import path from 'path';
+import { getSongsData } from '@/lib/kv-storage';
 
 /**
  * API Route to get songs
- * Returns cached Spotify songs, or falls back to seed data
+ * Returns songs from Vercel KV storage, or falls back to seed data
  *
  * Usage: GET /api/songs
  */
 export async function GET() {
   try {
-    const dataPath = path.join(process.cwd(), 'data', 'songs.json');
+    const data = await getSongsData();
 
-    // Check if cached songs exist (updated from Spotify)
-    if (fs.existsSync(dataPath)) {
-      const fileContent = fs.readFileSync(dataPath, 'utf-8');
-      const data = JSON.parse(fileContent);
-
-      return NextResponse.json({
-        success: true,
-        songs: data.songs,
-        lastUpdated: data.lastUpdated,
-        source: 'spotify',
-      });
-    }
-
-    // Fall back to seed data if no cached data exists
-    console.log('Using seed data - no cached songs found');
-    const seedDataPath = path.join(process.cwd(), 'lib', 'seed-songs.json');
-
-    if (fs.existsSync(seedDataPath)) {
-      const seedFileContent = fs.readFileSync(seedDataPath, 'utf-8');
-      const seedData = JSON.parse(seedFileContent);
-
-      return NextResponse.json({
-        success: true,
-        songs: seedData.songs,
-        lastUpdated: seedData.lastUpdated,
-        source: 'seed',
-      });
-    }
-
-    // If even seed data is missing, return error
-    return NextResponse.json(
-      {
-        success: false,
-        error: 'No songs data available. Please contact support.',
-      },
-      { status: 500 }
-    );
+    return NextResponse.json({
+      success: true,
+      songs: data.songs,
+      lastUpdated: data.lastUpdated,
+      source: 'kv',
+    });
   } catch (error) {
     console.error('Error loading songs:', error);
 

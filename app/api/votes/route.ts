@@ -1,17 +1,10 @@
 import { NextRequest, NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import { Song } from '@/types';
 import { calculateBattleResult } from '@/lib/elo';
+import { getSongsData, saveSongsData } from '@/lib/kv-storage';
 
 interface VoteRequest {
   winnerId: string;
   loserId: string;
-}
-
-interface SongsData {
-  lastUpdated: string;
-  songs: Song[];
 }
 
 /**
@@ -36,10 +29,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Load songs data
-    const dataPath = path.join(process.cwd(), 'data', 'songs.json');
-    const fileContent = await fs.readFile(dataPath, 'utf-8');
-    const data: SongsData = JSON.parse(fileContent);
+    // Load songs data from KV
+    const data = await getSongsData();
 
     // Find winner and loser songs
     const winnerIndex = data.songs.findIndex(s => s.id === winnerId);
@@ -84,8 +75,8 @@ export async function POST(request: NextRequest) {
     // Update lastUpdated timestamp
     data.lastUpdated = new Date().toISOString();
 
-    // Save updated data back to file
-    await fs.writeFile(dataPath, JSON.stringify(data, null, 2));
+    // Save updated data back to KV
+    await saveSongsData(data);
 
     // Return the updated songs
     const updatedWinner = data.songs.find(s => s.id === winnerId);
@@ -119,9 +110,7 @@ export async function POST(request: NextRequest) {
  */
 export async function GET() {
   try {
-    const dataPath = path.join(process.cwd(), 'data', 'songs.json');
-    const fileContent = await fs.readFile(dataPath, 'utf-8');
-    const data: SongsData = JSON.parse(fileContent);
+    const data = await getSongsData();
 
     const totalVotes = data.songs.reduce((sum, song) => sum + song.totalBattles, 0);
     const totalSongs = data.songs.length;

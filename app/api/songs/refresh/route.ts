@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { fetchTop500Songs } from '@/lib/spotify';
-import fs from 'fs/promises';
-import path from 'path';
+import { getSongsData, saveSongsData } from '@/lib/kv-storage';
 
 /**
  * API Route to refresh songs from Spotify
@@ -37,14 +36,12 @@ export async function POST(request: Request) {
 
     console.log(`Fetched ${newSongs.length} songs from Spotify`);
 
-    // Load existing songs to preserve vote data
-    const dataPath = path.join(process.cwd(), 'data', 'songs.json');
+    // Load existing songs from KV to preserve vote data
     let existingSongs: any[] = [];
 
     try {
-      const existingData = await fs.readFile(dataPath, 'utf-8');
-      const parsed = JSON.parse(existingData);
-      existingSongs = parsed.songs || [];
+      const existingData = await getSongsData();
+      existingSongs = existingData.songs || [];
       console.log(`Found ${existingSongs.length} existing songs with vote data`);
     } catch {
       console.log('No existing songs found - this is a fresh start');
@@ -78,18 +75,15 @@ export async function POST(request: Request) {
 
     console.log(`Merged songs: ${mergedSongs.length} total (preserved vote data for existing songs)`);
 
-    // Ensure data directory exists
-    await fs.mkdir(path.join(process.cwd(), 'data'), { recursive: true });
-
-    // Write merged songs to file with timestamp
+    // Save merged songs to KV with timestamp
     const data = {
       lastUpdated: new Date().toISOString(),
       songs: mergedSongs,
     };
 
-    await fs.writeFile(dataPath, JSON.stringify(data, null, 2));
+    await saveSongsData(data);
 
-    console.log(`Saved ${mergedSongs.length} songs to ${dataPath}`);
+    console.log(`Saved ${mergedSongs.length} songs to KV storage`);
 
     return NextResponse.json({
       success: true,
@@ -115,11 +109,8 @@ export async function POST(request: Request) {
  */
 export async function GET() {
   try {
-    const dataPath = path.join(process.cwd(), 'data', 'songs.json');
-
     try {
-      const fileContent = await fs.readFile(dataPath, 'utf-8');
-      const data = JSON.parse(fileContent);
+      const data = await getSongsData();
 
       return NextResponse.json({
         lastUpdated: data.lastUpdated,
