@@ -7,7 +7,6 @@ import { motion } from 'framer-motion';
 import Image from 'next/image';
 
 export default function LeaderboardPage() {
-  const [limit, setLimit] = useState(100);
   const [songs, setSongs] = useState<Song[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -19,10 +18,10 @@ export default function LeaderboardPage() {
         const data = await response.json();
 
         if (data.success && data.songs) {
-          // Sort by ELO rating (descending) and take top songs
+          // Sort by ELO rating (descending) and take top 100
           const sortedSongs = [...data.songs]
             .sort((a, b) => b.eloRating - a.eloRating)
-            .slice(0, limit);
+            .slice(0, 100);
           setSongs(sortedSongs);
         }
       } catch (error) {
@@ -33,7 +32,7 @@ export default function LeaderboardPage() {
     }
 
     fetchSongs();
-  }, [limit]);
+  }, []);
 
   if (loading) {
     return (
