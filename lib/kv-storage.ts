@@ -25,7 +25,7 @@ export async function getSongsData(): Promise<SongsData> {
 
     // Fall back to seed data
     console.log('No data in KV, loading seed data');
-    const seedDataPath = path.join(process.cwd(), 'lib', 'seed-songs.json');
+    const seedDataPath = path.join(process.cwd(), 'data', 'songs.json');
 
     if (fs.existsSync(seedDataPath)) {
       const seedFileContent = fs.readFileSync(seedDataPath, 'utf-8');

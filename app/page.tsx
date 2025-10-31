@@ -116,50 +116,55 @@ export default function HomePage() {
           {loading ? (
             <div className="text-center text-dimmed-gray">Loading stats...</div>
           ) : (
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+            <div className="space-y-4">
+              {/* Total Votes - Full Width */}
               <div className="relative group">
-                <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-cyan-glow/30 transition-all duration-300 hover:scale-105 hover:border-cyan-glow/60 hover:shadow-elevation-high hover:-translate-y-1">
-                  <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-cyan-glow text-glow-cyan mb-2">
-                    {stats.totalSongs.toLocaleString()}
-                  </div>
-                  <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
-                    Songs
-                  </div>
-                </div>
-                <div className="absolute inset-0 bg-cyan-glow/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-              </div>
-              <div className="relative group">
-                <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-electric-pink/30 transition-all duration-300 hover:scale-105 hover:border-electric-pink/60 hover:shadow-elevation-high hover:-translate-y-1">
-                  <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-electric-pink text-glow-pink mb-2">
+                <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-electric-pink/30 transition-all duration-300 hover:scale-[1.02] hover:border-electric-pink/60 hover:shadow-elevation-high hover:-translate-y-1">
+                  <div className="font-mono text-3xl sm:text-4xl md:text-5xl text-electric-pink text-glow-pink mb-2">
                     {stats.totalVotes.toLocaleString()}
                   </div>
-                  <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
-                    Votes
+                  <div className="font-space text-sm sm:text-base text-star-white/60 uppercase tracking-wider">
+                    Total Votes
                   </div>
                 </div>
                 <div className="absolute inset-0 bg-electric-pink/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
               </div>
-              <div className="relative group">
-                <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-green/30 transition-all duration-300 hover:scale-105 hover:border-neon-green/60 hover:shadow-elevation-high hover:-translate-y-1">
-                  <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-neon-green text-glow-green mb-2">
-                    {stats.votesToday.toLocaleString()}
+
+              {/* Three Stats - Below */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+                <div className="relative group">
+                  <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-cyan-glow/30 transition-all duration-300 hover:scale-105 hover:border-cyan-glow/60 hover:shadow-elevation-high hover:-translate-y-1">
+                    <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-cyan-glow text-glow-cyan mb-2">
+                      {stats.totalSongs.toLocaleString()}
+                    </div>
+                    <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
+                      Number of Songs
+                    </div>
                   </div>
-                  <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
-                    Today
-                  </div>
+                  <div className="absolute inset-0 bg-cyan-glow/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
                 </div>
-                <div className="absolute inset-0 bg-neon-green/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-              </div>
-              <div className="relative group">
-                <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-purple/30 transition-all duration-300 hover:scale-105 hover:border-neon-purple/60 hover:shadow-elevation-high hover:-translate-y-1">
-                  <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-neon-purple text-glow-purple mb-2">
-                    {stats.activeVoters}
+                <div className="relative group">
+                  <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-green/30 transition-all duration-300 hover:scale-105 hover:border-neon-green/60 hover:shadow-elevation-high hover:-translate-y-1">
+                    <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-neon-green text-glow-green mb-2">
+                      {stats.votesToday.toLocaleString()}
+                    </div>
+                    <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
+                      Today
+                    </div>
                   </div>
-                  <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
-                    Active
-                  </div>
+                  <div className="absolute inset-0 bg-neon-green/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
                 </div>
-                <div className="absolute inset-0 bg-neon-purple/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                <div className="relative group">
+                  <div className="text-center p-6 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-purple/30 transition-all duration-300 hover:scale-105 hover:border-neon-purple/60 hover:shadow-elevation-high hover:-translate-y-1">
+                    <div className="font-mono text-2xl sm:text-3xl md:text-4xl text-neon-purple text-glow-purple mb-2">
+                      {stats.activeVoters}
+                    </div>
+                    <div className="font-space text-xs sm:text-sm text-star-white/60 uppercase tracking-wider">
+                      Active
+                    </div>
+                  </div>
+                  <div className="absolute inset-0 bg-neon-purple/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
+                </div>
               </div>
             </div>
           )}
@@ -193,10 +198,18 @@ export default function HomePage() {
                         #{index + 1}
                       </div>
 
-                      {/* Album Art Placeholder */}
+                      {/* Album Art */}
                       <div className="relative">
                         <div className="w-12 h-12 sm:w-16 sm:h-16 glass-card border-2 border-neon-purple/50 rounded-lg flex-shrink-0 group-hover:border-electric-pink/80 transition-all duration-300 flex items-center justify-center overflow-hidden">
-                          <span className="text-2xl opacity-60">♪</span>
+                          {song.albumArtUrl ? (
+                            <img
+                              src={song.albumArtUrl}
+                              alt={`${song.title} album art`}
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <span className="text-2xl opacity-60">♪</span>
+                          )}
                         </div>
                         <div className="absolute inset-0 bg-neon-purple/20 blur-md rounded-lg opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>

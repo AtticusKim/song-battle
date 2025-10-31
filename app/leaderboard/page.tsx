@@ -66,14 +66,14 @@ export default function LeaderboardPage() {
           </div>
 
           {/* Stats Summary */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
             <div className="relative group">
               <div className="text-center p-5 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-cyan-glow/30 transition-all duration-300 hover:scale-105 hover:border-cyan-glow/60 hover:shadow-elevation-high hover:-translate-y-1">
                 <div className="font-mono text-xl sm:text-2xl text-cyan-glow text-glow-cyan mb-2">
                   {songs.length}
                 </div>
                 <div className="font-space text-xs text-star-white/60 uppercase tracking-wider">
-                  Songs
+                  Total Songs
                 </div>
               </div>
               <div className="absolute inset-0 bg-cyan-glow/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
@@ -92,24 +92,13 @@ export default function LeaderboardPage() {
             <div className="relative group">
               <div className="text-center p-5 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-green/30 transition-all duration-300 hover:scale-105 hover:border-neon-green/60 hover:shadow-elevation-high hover:-translate-y-1">
                 <div className="font-mono text-xl sm:text-2xl text-neon-green text-glow-green mb-2">
-                  {Math.round(songs.reduce((acc, s) => acc + s.totalBattles, 0) / songs.length)}
+                  {songs.reduce((acc, s) => acc + s.totalBattles, 0)}
                 </div>
                 <div className="font-space text-xs text-star-white/60 uppercase tracking-wider">
-                  Avg Battles
+                  Total Votes
                 </div>
               </div>
               <div className="absolute inset-0 bg-neon-green/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
-            </div>
-            <div className="relative group">
-              <div className="text-center p-5 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-purple/30 transition-all duration-300 hover:scale-105 hover:border-neon-purple/60 hover:shadow-elevation-high hover:-translate-y-1">
-                <div className="font-mono text-xl sm:text-2xl text-neon-purple text-glow-purple mb-2">
-                  {Math.round((songs.reduce((acc, s) => acc + (s.wins / s.totalBattles), 0) / songs.length) * 100)}%
-                </div>
-                <div className="font-space text-xs text-star-white/60 uppercase tracking-wider">
-                  Avg Win Rate
-                </div>
-              </div>
-              <div className="absolute inset-0 bg-neon-purple/10 blur-xl rounded-xl opacity-0 group-hover:opacity-100 transition-opacity -z-10" />
             </div>
           </div>
 
