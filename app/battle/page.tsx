@@ -55,8 +55,7 @@ export default function BattlePage() {
     fetchSongs();
   }, []);
 
-  const handleLoadNext = () => {
-    if (songs.length === 0) return null;
+  const handleLoadNext = (): { song1: Song; song2: Song } => {
     const newPair = getRandomBattlePair(songs);
     setBattlePair(newPair);
     return newPair;
