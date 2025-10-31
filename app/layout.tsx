@@ -23,7 +23,7 @@ const spaceMono = Space_Mono({
 })
 
 export const metadata: Metadata = {
-  title: 'Song Battle - ELO Music Ranking',
+  title: 'Vote for Your Favorite Song!',
   description: 'Vote on head-to-head music battles and shape the global rankings',
 }
 
