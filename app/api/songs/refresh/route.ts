@@ -5,40 +5,97 @@ import path from 'path';
 
 /**
  * API Route to refresh songs from Spotify
- * Call this endpoint weekly to update the Top 500 songs
+ * Automatically called weekly by Vercel Cron Job
+ * Can also be manually triggered with proper authorization
  *
  * Usage: POST /api/songs/refresh
  */
-export async function POST() {
+export async function POST(request: Request) {
   try {
+    // Verify authorization (Vercel Cron or manual with secret)
+    const authHeader = request.headers.get('authorization');
+    const cronSecret = process.env.CRON_SECRET;
+
+    // Allow Vercel Cron (has special header) or requests with correct secret
+    const isVercelCron = authHeader === `Bearer ${process.env.CRON_SECRET}`;
+    const isManualWithSecret = cronSecret && authHeader === `Bearer ${cronSecret}`;
+
+    // In development, allow without auth for testing
+    const isDevelopment = process.env.NODE_ENV === 'development';
+
+    if (!isDevelopment && !isVercelCron && !isManualWithSecret) {
+      return NextResponse.json(
+        { success: false, error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
     console.log('Fetching Top 500 songs from Spotify...');
 
-    // Fetch songs from Spotify
-    const songs = await fetchTop500Songs();
+    // Fetch fresh songs from Spotify
+    const newSongs = await fetchTop500Songs();
 
-    console.log(`Fetched ${songs.length} songs from Spotify`);
+    console.log(`Fetched ${newSongs.length} songs from Spotify`);
 
-    // Save to a JSON file for caching
+    // Load existing songs to preserve vote data
     const dataPath = path.join(process.cwd(), 'data', 'songs.json');
+    let existingSongs: any[] = [];
+
+    try {
+      const existingData = await fs.readFile(dataPath, 'utf-8');
+      const parsed = JSON.parse(existingData);
+      existingSongs = parsed.songs || [];
+      console.log(`Found ${existingSongs.length} existing songs with vote data`);
+    } catch {
+      console.log('No existing songs found - this is a fresh start');
+    }
+
+    // Create a map of existing songs by Spotify ID for quick lookup
+    const existingSongsMap = new Map(
+      existingSongs.map(song => [song.spotifyId, song])
+    );
+
+    // Merge: Keep existing vote data for songs that already exist
+    const mergedSongs = newSongs.map(newSong => {
+      const existing = existingSongsMap.get(newSong.spotifyId);
+
+      if (existing) {
+        // Song exists - preserve vote data, update metadata
+        return {
+          ...newSong,
+          id: existing.id, // Keep existing ID
+          eloRating: existing.eloRating,
+          totalBattles: existing.totalBattles,
+          wins: existing.wins,
+          losses: existing.losses,
+          currentRank: existing.currentRank,
+        };
+      }
+
+      // New song - use default values from Spotify
+      return newSong;
+    });
+
+    console.log(`Merged songs: ${mergedSongs.length} total (preserved vote data for existing songs)`);
 
     // Ensure data directory exists
     await fs.mkdir(path.join(process.cwd(), 'data'), { recursive: true });
 
-    // Write songs to file with timestamp
+    // Write merged songs to file with timestamp
     const data = {
       lastUpdated: new Date().toISOString(),
-      songs: songs,
+      songs: mergedSongs,
     };
 
     await fs.writeFile(dataPath, JSON.stringify(data, null, 2));
 
-    console.log(`Saved ${songs.length} songs to ${dataPath}`);
+    console.log(`Saved ${mergedSongs.length} songs to ${dataPath}`);
 
     return NextResponse.json({
       success: true,
-      message: `Successfully fetched and cached ${songs.length} songs`,
+      message: `Successfully refreshed ${mergedSongs.length} songs (preserved existing vote data)`,
       lastUpdated: data.lastUpdated,
-      songCount: songs.length,
+      songCount: mergedSongs.length,
     });
   } catch (error) {
     console.error('Error refreshing songs:', error);
