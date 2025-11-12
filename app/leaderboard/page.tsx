@@ -91,7 +91,7 @@ export default function LeaderboardPage() {
             <div className="relative group">
               <div className="text-center p-5 rounded-xl bg-deep-space/80 backdrop-blur-xl border border-neon-green/30 transition-all duration-300 hover:scale-105 hover:border-neon-green/60 hover:shadow-elevation-high hover:-translate-y-1">
                 <div className="font-mono text-xl sm:text-2xl text-neon-green text-glow-green mb-2">
-                  {songs.reduce((acc, s) => acc + s.totalBattles, 0)}
+                  {Math.floor(songs.reduce((acc, s) => acc + s.totalBattles, 0) / 2)}
                 </div>
                 <div className="font-space text-xs text-star-white/60 uppercase tracking-wider">
                   Total Votes

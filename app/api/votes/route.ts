@@ -112,7 +112,8 @@ export async function GET() {
   try {
     const data = await getSongsData();
 
-    const totalVotes = data.songs.reduce((sum, song) => sum + song.totalBattles, 0);
+    // Each vote involves 2 songs, so divide by 2 to get true vote count
+    const totalVotes = Math.floor(data.songs.reduce((sum, song) => sum + song.totalBattles, 0) / 2);
     const totalSongs = data.songs.length;
     const avgBattlesPerSong = Math.round(totalVotes / totalSongs);
 
